@@ -1,0 +1,78 @@
+Product:
+
+{
+	"prodnumber": "100-TP-EK",
+	"designation": "Tischplatte Essecke",
+	"quantity": 10,
+	"price": 53.17,
+	"unit": "Stk"
+}
+_ID: 690b4bef6dadc547fd002a15
+
+
+{
+	"prodnumber": "200-TB-EK",
+	"designation": "Tischbein Essecke",
+	"quantity": 43,
+	"price": 9.71,
+	"unit": "Stk"
+}
+_ID: 690b4c016dadc547fd002a18
+
+Order:
+
+{
+    "ordernumber": "2025-001",
+    "shopuserid": "6909c12f19fa74a8857834d5",
+    "positions": [
+        {
+            "positionNumber": 1,
+            "prodnumber": "100-TP-EK",
+            "designation": "Tischplatte Essecke",
+            "orderquantity": 1,
+            "price": 53.17,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 2,
+            "prodnumber": "200-TB-EK",
+            "designation": "Tischbein Essecke",
+            "orderquantity": 4,
+            "price": 9.71,
+            "unit": "Stk"
+        }
+    ]
+}
+
+ID statt Produktnummer
+{
+    "ordernumber": "2025-001",
+    "shopuserid": "6909c12f19fa74a8857834d5",
+    "positions": [
+        {
+            "positionNumber": 1,
+            "prodnumber": "690b4bef6dadc547fd002a15",
+            "designation": "Tischplatte Essecke",
+            "orderquantity": 1,
+            "price": 53.17,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 2,
+            "prodnumber": "690b4c016dadc547fd002a18",
+            "designation": "Tischbein Essecke",
+            "orderquantity": 4,
+            "price": 9.71,
+            "unit": "Stk"
+        }
+    ]
+}
+
+
+// User
+{
+	"firstName": "Rainer",
+	"lastName": "Zufall",
+	"email": "r.zufall@cern.ch",
+	"password": "Sp3n up!"
+}
