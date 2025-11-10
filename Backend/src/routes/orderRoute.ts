@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { createOrder, deleteOrder, getAllOrders } from "#controllers";
+import {
+  createOrder,
+  deleteOrder,
+  getAllOrders,
+  getOrderById,
+} from "#controllers";
 import { authenticate, authorize, validateBodyZod } from "#middlewares";
 import { orderInputSchema } from "#schemas";
 import { Order } from "#models";
