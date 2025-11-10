@@ -1,5 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
-import type { required } from "zod/mini";
+import { required } from "zod/mini";
 
 const orderPositionSchema = new Schema({
   positionNumber: { type: Number, required: true, trim: true, default: 1 },
@@ -23,5 +23,6 @@ const orderSchema = new Schema({
   },
   shopuserid: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   positions: [{ type: orderPositionSchema }],
+  totalOrder: { type: Number, required: true },
 });
 export default model("Order", orderSchema);

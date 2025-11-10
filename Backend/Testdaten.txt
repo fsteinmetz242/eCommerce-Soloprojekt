@@ -9,7 +9,6 @@ Product:
 }
 _ID: 690b4bef6dadc547fd002a15
 
-
 {
 	"prodnumber": "200-TB-EK",
 	"designation": "Tischbein Essecke",
@@ -18,6 +17,56 @@ _ID: 690b4bef6dadc547fd002a15
 	"unit": "Stk"
 }
 _ID: 690b4c016dadc547fd002a18
+
+PC:
+{
+	"prodnumber": "700-555-001",
+	"designation": "Housing",
+	"quantity": 9,
+	"price": 110.43,
+	"unit": "Stk"
+}
+
+{
+	"prodnumber": "700-555-002",
+	"designation": "Mainboard ASUS",
+	"quantity": 11,
+	"price": 69.71,
+	"unit": "Stk"
+}
+
+{
+	"prodnumber": "700-555-003",
+	"designation": "Mainboard MSI",
+	"quantity": 31,
+	"price": 123.17,
+	"unit": "Stk"
+}
+
+{
+	"prodnumber": "700-555-004",
+	"designation": "CPU AMD",
+	"quantity": 17,
+	"price": 189.71,
+	"unit": "Stk"
+}
+
+{
+	"prodnumber": "700-555-005",
+	"designation": "Powersupply",
+	"quantity": 17,
+	"price": 89.98,
+	"unit": "Stk"
+}
+
+{
+	"prodnumber": "700-555-006",
+	"designation": "SSD 480GB",
+	"quantity": 7,
+	"price": 49.98,
+	"unit": "Stk"
+}
+
 
 Order:
 
@@ -67,6 +116,71 @@ ID statt Produktnummer
         }
     ]
 }
+
+Order PC:
+
+{
+    "ordernumber": "2025-010",
+    "shopuserid": "6909c12f19fa74a8857834d5",
+    "positions": [
+        {
+            "positionNumber": 1,
+            "prodnumber": "691206d05312c8e74e4107fa",
+            "designation": "Housing",
+            "orderquantity": 1,
+            "price": 110.43,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 2,
+            "prodnumber": "691206dc5312c8e74e4107fd",
+            "designation": "Mainboard ASUS",
+            "orderquantity": 1,
+            "price": 69.71,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 3,
+            "prodnumber": "691206f95312c8e74e410803",
+            "designation": "CPU AMD",
+            "orderquantity": 1,
+            "price": 189.71,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 4,
+            "prodnumber": "691207075312c8e74e410806",
+            "designation": "Powersupply",
+            "orderquantity": 1,
+            "price": 89.98,
+            "unit": "Stk"
+        },
+        {
+            "positionNumber": 5,
+            "prodnumber": "691207145312c8e74e410809",
+            "designation": "480GB",
+            "orderquantity": 3,
+            "price": 49.98,
+            "unit": "Stk"
+        }
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // User
