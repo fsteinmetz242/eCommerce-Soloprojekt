@@ -2,6 +2,7 @@ import type { RequestHandler } from "express";
 import { Order } from "#models";
 import { z } from "zod/v4";
 import { orderInputSchema } from "#schemas";
+import mongoose, { Schema, Types } from "mongoose";
 
 type OrderInputDTO = z.infer<typeof orderInputSchema>;
 type OrderDTO = z.infer<typeof orderInputSchema>;
