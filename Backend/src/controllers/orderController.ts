@@ -12,6 +12,8 @@ type OrderDTO = z.infer<typeof orderInputSchema>;
 // Warenkorb leer => createOrder
 // Warenkorb besteht =>  addOrderPosition
 //
+// Besser Warenkorb im Frontend verwalten und erst bei bestellen übertragen
+//
 export const createOrder: RequestHandler<
   unknown,
   OrderDTO,
@@ -35,4 +37,18 @@ export const createOrder: RequestHandler<
   });
 
   res.status(201).json(newOrder);
+};
+
+export const deleteOrder: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+  const deletedOrder = await Order.findByIdAndDelete(id);
+
+  if (!deletedOrder) {
+    throw new Error("Order not found", { cause: 404 });
+  }
+
+  res.status(200).json({
+    message: `Order with id:${id} was deleted`,
+    post: deletedOrder,
+  });
 };
