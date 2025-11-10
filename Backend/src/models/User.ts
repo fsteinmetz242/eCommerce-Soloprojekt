@@ -28,6 +28,11 @@ const userSchema = new Schema(
       type: [String],
       default: ["user"],
     },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
   },
   { timestamps: true }
 );

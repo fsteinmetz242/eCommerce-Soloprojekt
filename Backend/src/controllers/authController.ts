@@ -5,22 +5,16 @@ import { User } from "#models";
 import type { z } from "zod/v4";
 //import { userInputSchema, type authInputSchema } from "#schemas";
 import type { authRegisterSchema, authLoginSchema } from "#schemas";
+import {
+  signAccessToken,
+  signRefreshToken,
+  accessCookieOpts,
+  refreshCookieOpts,
+} from "#utils";
 
 /* ---------- DTOs inferred from Zod ---------- */
 type RegisterDTO = z.infer<typeof authRegisterSchema>;
 type LoginDTO = z.infer<typeof authLoginSchema>;
-
-/* ENV HELPERS */
-const ACCESS_TTL_SEC = Number(process.env.ACCESS_TOKEN_TTL ?? 600); // Entweder Wert aus .env oder 10 Min. TTL
-const JWT_SECRET = process.env.ACCESS_JWT_SECRET!;
-const JWT_ISSUER = process.env.JWT_ISSUER ?? "WDG024";
-
-// SignAccessToken
-const signAccessToken = (payload: object) =>
-  jwt.sign(payload, JWT_SECRET, {
-    expiresIn: `${ACCESS_TTL_SEC}s`,
-    issuer: JWT_ISSUER,
-  });
 
 /* ---------------- REGISTER ---------------- */
 export const register: RequestHandler<
@@ -44,30 +38,23 @@ export const register: RequestHandler<
     password: hash,
   });
 
-  const token = signAccessToken({
+  const accessToken = signAccessToken({
     jti: user._id.toString(),
     roles: user.roles,
   });
 
-  res
-    .cookie("accessToken", token, {
-      httpOnly: true,
-      // sameSite,
-      // secure: true
-      maxAge: ACCESS_TTL_SEC * 1000,
-    })
-    .status(201)
-    .json({
-      message: "registered successfully",
-      user: user,
-      token,
-    });
+  res.cookie("accessToken", accessToken, accessCookieOpts).status(201).json({
+    message: "registereed successfully",
+    user,
+    token: accessToken,
+    // secure: process.env.NODE_ENV === 'production'
+  });
 };
 
 /* ---------------- LOGIN ---------------- */
 export const login: RequestHandler<
   unknown,
-  { message: string; user: any; token: string },
+  { message: string; user: any; accessToken: string; refreshToken: string },
   LoginDTO
 > = async (req, res) => {
   const { email, password } = req.body;
@@ -82,30 +69,107 @@ export const login: RequestHandler<
     throw new Error("Invalid credentials", { cause: { status: 400 } });
   }
 
-  const token = signAccessToken({
+  const accessToken = signAccessToken({
     jti: user._id.toString(),
     roles: user.roles,
+    ver: user.tokenVersion,
+  });
+
+  const refreshToken = signRefreshToken({
+    jti: user._id.toString(),
+    roles: user.roles,
+    ver: user.tokenVersion,
   });
 
   const { password: _, ...userWithoutPassword } = user.toObject();
 
   res
-    .cookie("accessToken", token, {
-      httpOnly: true,
-      maxAge: ACCESS_TTL_SEC * 1000,
-    })
+    .cookie("accessToken", accessToken, accessCookieOpts)
+    .cookie("refreshToken", refreshToken, refreshCookieOpts)
     .status(200)
     .json({
       message: "logged in",
-      // user,
       user: userWithoutPassword,
-      token,
+      accessToken,
+      refreshToken,
+    });
+};
+
+/* ---------------- REFRESH ---------------- */
+export const refresh: RequestHandler<
+  unknown,
+  { message: string; accessToken: string; refreshToken: string },
+  unknown
+> = async (req, res) => {
+  const token = req.cookies?.refreshToken;
+
+  if (!token) {
+    throw (new Error("No refresh token"), { cause: { status: 401 } });
+  }
+
+  let payload: jwt.JwtPayload & { jti: string; ver?: number };
+
+  try {
+    payload = jwt.verify(token, process.env.REFRESH_JWT_SECRET!) as any;
+  } catch {
+    throw new Error("Invalid refresh token", { cause: { status: 401 } });
+  }
+
+  const user = await User.findById(payload.jti).select("+tokenVersion");
+  if (!user) {
+    throw new Error("something went wrong during /refresh", {
+      cause: { status: 401 },
+    });
+  }
+
+  if (payload.ver !== undefined && payload.ver !== user.tokenVersion) {
+    throw new Error("refresh token revoked", { cause: { status: 401 } });
+  }
+
+  const newAccess = signAccessToken({
+    jti: user._id.toString(),
+    roles: user.roles,
+    ver: user.tokenVersion,
+  });
+
+  const newRefresh = signRefreshToken({
+    jti: user._id.toString(),
+    roles: user.roles,
+  });
+
+  res
+    .cookie("accessToken", newAccess, accessCookieOpts)
+    .cookie("refreshToken", newRefresh, refreshCookieOpts)
+    .json({
+      message: "refreshed",
+      accessToken: newAccess,
+      refreshToken: newRefresh,
     });
 };
 
 /* ---------------- LOGOUT ---------------- */
 export const logout: RequestHandler = async (req, res) => {
-  res.clearCookie("accessToken").json({ message: "successfully logged out" });
+  res
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken")
+    .json({ message: "looged out" });
+};
+
+/* ---------------- LOGOUT-ALL ---------------- */
+
+export const logoutAll: RequestHandler = async (req, res) => {
+  const id = req.user?.id;
+
+  if (!id) {
+    throw new Error("unauthorized", { cause: { status: 401 } });
+  }
+
+  await User.findByIdAndUpdate(id, { $inc: { tokenVersion: 1 } });
+
+  res
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken")
+    .json({ message: "logged out from all devices" });
 };
 
 /* ---------------- ME ---------------- */
