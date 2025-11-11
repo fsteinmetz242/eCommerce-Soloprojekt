@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env*
+test.txt
+token_test.txt
+*.odt
+*.sh
+*.tar.gz

@@ -1,4 +1,6 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import "#db";
 import {
   authRoutes,
@@ -8,7 +10,6 @@ import {
   orderRoutes,
 } from "#routes";
 import { errorHandler } from "#middlewares";
-import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,9 @@ const port = 3000;
 // body-parser
 app.use(express.json());
 app.use(cookieParser());
+
+//CORS POLICY
+app.use(cors({ origin: "*" }));
 
 // Routes
 app.use("/auth", authRoutes);
